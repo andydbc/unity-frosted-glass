@@ -3,6 +3,7 @@
 	Properties
 	{
 		_FrostTex ("Fross Texture", 2D) = "white" {}
+		_FrostIntensity ("Frost Intensity", Range(0.0, 1.0)) = 0.5
 	}
 	SubShader
 	{
@@ -33,6 +34,8 @@
 			sampler2D _FrostTex;
 			float4 _FrostTex_ST;
 
+			float _FrostIntensity;
+
 			sampler2D _GrabBlurTexture_0;
 			sampler2D _GrabBlurTexture_1;
 			sampler2D _GrabBlurTexture_2;
@@ -49,8 +52,10 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float surfSmooth = 1-tex2D(_FrostTex, i.uvfrost);
+				float surfSmooth = 1-tex2D(_FrostTex, i.uvfrost) * _FrostIntensity;
 				
+				surfSmooth = clamp(0, 1, surfSmooth);
+
 				half4 refraction;
 
 				half4 ref00 = tex2Dproj(_GrabBlurTexture_0, i.uvgrab);
