@@ -13,8 +13,7 @@ public class CommandBufferBlur : MonoBehaviour
     Camera _Camera = null;
     CommandBuffer _CommandBuffer = null;
 
-    private int prevW = 0;
-    private int prevH = 0;
+    Vector2 _ScreenResolution = Vector2.zero;
 
     public void Cleanup()
     {
@@ -91,13 +90,14 @@ public class CommandBufferBlur : MonoBehaviour
 
         _Camera.AddCommandBuffer(CameraEvent.AfterSkybox, _CommandBuffer);
 
-        prevW = Screen.width;
-        prevH = Screen.height;
+        _ScreenResolution = new Vector2(Screen.width, Screen.height);
     }
 
     void OnPreRender()
     {
-        if ((Screen.width != prevW) || (Screen.height != prevH)) Cleanup();
+        if (_ScreenResolution != new Vector2(Screen.width, Screen.height))
+            Cleanup();
+
         Initialize();
     }
 }
