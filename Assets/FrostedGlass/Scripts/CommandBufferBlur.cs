@@ -13,6 +13,9 @@ public class CommandBufferBlur : MonoBehaviour
     Camera _Camera = null;
     CommandBuffer _CommandBuffer = null;
 
+	private int prevW = 0;
+	private int prevH = 0;
+
     public void Cleanup()
     {
         if (!Initialized)
@@ -87,10 +90,14 @@ public class CommandBufferBlur : MonoBehaviour
         }
 
         _Camera.AddCommandBuffer(CameraEvent.AfterSkybox, _CommandBuffer);
+
+		prevW = Screen.width;
+		prevH = Screen.height;
     }
 
     void OnPreRender()
     {
+		if ((Screen.width != prevW) || (Screen.height != prevH)) Cleanup();
         Initialize();
     }
 }
