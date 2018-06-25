@@ -20,7 +20,7 @@ public class CommandBufferBlur : MonoBehaviour
         if (!Initialized)
             return;
 
-        _Camera.RemoveCommandBuffer(CameraEvent.AfterSkybox, _CommandBuffer);
+        _Camera.RemoveCommandBuffer(CameraEvent.BeforeForwardAlpha, _CommandBuffer);
         _CommandBuffer = null;
         Object.DestroyImmediate(_Material);
     }
@@ -88,7 +88,7 @@ public class CommandBufferBlur : MonoBehaviour
             _CommandBuffer.SetGlobalTexture("_GrabBlurTexture_" + i, blurredID);
         }
 
-        _Camera.AddCommandBuffer(CameraEvent.AfterSkybox, _CommandBuffer);
+        _Camera.AddCommandBuffer(CameraEvent.BeforeForwardAlpha, _CommandBuffer);
 
         _ScreenResolution = new Vector2(Screen.width, Screen.height);
     }
