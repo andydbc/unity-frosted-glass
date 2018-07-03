@@ -2,9 +2,12 @@
 using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
+[ImageEffectAllowedInSceneView]
 [RequireComponent(typeof(Camera))]
 public class CommandBufferBlur : MonoBehaviour
 {
+    private static Shader _STATIC_SHADER;
+
     [SerializeField]
     Shader _Shader;
 
@@ -20,7 +23,7 @@ public class CommandBufferBlur : MonoBehaviour
         if (!Initialized)
             return;
 
-        _Camera.RemoveCommandBuffer(CameraEvent.AfterSkybox, _CommandBuffer);
+        _Camera.RemoveCommandBuffer(CameraEvent.BeforeForwardAlpha, _CommandBuffer);
         _CommandBuffer = null;
         Object.DestroyImmediate(_Material);
     }
@@ -48,7 +51,7 @@ public class CommandBufferBlur : MonoBehaviour
 
         if (!_Material)
         {
-            _Material = new Material(_Shader);
+            _Material = new Material(_Shader != null ? _Shader : _STATIC_SHADER);
             _Material.hideFlags = HideFlags.HideAndDontSave;
         }
 
@@ -88,7 +91,7 @@ public class CommandBufferBlur : MonoBehaviour
             _CommandBuffer.SetGlobalTexture("_GrabBlurTexture_" + i, blurredID);
         }
 
-        _Camera.AddCommandBuffer(CameraEvent.AfterSkybox, _CommandBuffer);
+        _Camera.AddCommandBuffer(CameraEvent.BeforeForwardAlpha, _CommandBuffer);
 
         _ScreenResolution = new Vector2(Screen.width, Screen.height);
     }
@@ -99,5 +102,13 @@ public class CommandBufferBlur : MonoBehaviour
             Cleanup();
 
         Initialize();
+    }
+
+    void OnValidate()
+    {
+        if(_STATIC_SHADER != _Shader && _Shader != null)
+        {
+            _STATIC_SHADER = _Shader;
+        }
     }
 }
