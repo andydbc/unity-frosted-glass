@@ -2,10 +2,10 @@
 using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
+[ImageEffectAllowedInSceneView]
 [RequireComponent(typeof(Camera))]
 public class CommandBufferBlur : MonoBehaviour
 {
-    [SerializeField]
     Shader _Shader;
 
     Material _Material = null;
@@ -45,6 +45,14 @@ public class CommandBufferBlur : MonoBehaviour
     {
         if (Initialized)
             return;
+
+        if (!_Shader)
+        {
+            _Shader = Shader.Find("Hidden/SeparableGlassBlur");
+
+            if (!_Shader)
+                throw new MissingReferenceException("Unable to find required shader \"Hidden/SeparableGlassBlur\"");
+        }
 
         if (!_Material)
         {
