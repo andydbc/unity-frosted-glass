@@ -6,9 +6,6 @@ using UnityEngine.Rendering;
 [RequireComponent(typeof(Camera))]
 public class CommandBufferBlur : MonoBehaviour
 {
-    private static Shader _STATIC_SHADER;
-
-    [SerializeField]
     Shader _Shader;
 
     Material _Material = null;
@@ -49,9 +46,17 @@ public class CommandBufferBlur : MonoBehaviour
         if (Initialized)
             return;
 
+        if (!_Shader)
+        {
+            _Shader = Shader.Find("Hidden/SeparableGlassBlur");
+
+            if (!_Shader)
+                throw new MissingReferenceException("Unable to find required shader \"Hidden/SeparableGlassBlur\"");
+        }
+
         if (!_Material)
         {
-            _Material = new Material(_Shader != null ? _Shader : _STATIC_SHADER);
+            _Material = new Material(_Shader);
             _Material.hideFlags = HideFlags.HideAndDontSave;
         }
 
@@ -102,13 +107,5 @@ public class CommandBufferBlur : MonoBehaviour
             Cleanup();
 
         Initialize();
-    }
-
-    void OnValidate()
-    {
-        if(_STATIC_SHADER != _Shader && _Shader != null)
-        {
-            _STATIC_SHADER = _Shader;
-        }
     }
 }
