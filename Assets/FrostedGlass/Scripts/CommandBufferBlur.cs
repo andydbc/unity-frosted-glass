@@ -14,7 +14,7 @@ public class CommandBufferBlur : MonoBehaviour
     CommandBuffer _CommandBuffer = null;
 
     Vector2 _ScreenResolution = Vector2.zero;
-    RenderTextureFormat _BufferRenderTextureFormat;
+    RenderTextureFormat _BufferRenderTextureFormat = RenderTextureFormat.ARGB32;
 
     public void Cleanup()
     {
@@ -64,11 +64,7 @@ public class CommandBufferBlur : MonoBehaviour
         _Camera = GetComponent<Camera>();
 
         if (_Camera.allowHDR && SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR))
-        {
             _BufferRenderTextureFormat = RenderTextureFormat.DefaultHDR;
-        } else {
-            _BufferRenderTextureFormat = RenderTextureFormat.ARGB32;
-        }
 
         _CommandBuffer = new CommandBuffer();
         _CommandBuffer.name = "Blur screen";
