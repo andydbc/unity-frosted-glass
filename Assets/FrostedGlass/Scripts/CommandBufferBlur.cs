@@ -14,7 +14,7 @@ public class CommandBufferBlur : MonoBehaviour
     CommandBuffer _CommandBuffer = null;
 
     Vector2 _ScreenResolution = Vector2.zero;
-    RenderTextureFormat _BufferRenderTextureFormat = RenderTextureFormat.ARGB32;
+    RenderTextureFormat _TextureFormat = RenderTextureFormat.ARGB32;
 
     public void Cleanup()
     {
@@ -64,7 +64,7 @@ public class CommandBufferBlur : MonoBehaviour
         _Camera = GetComponent<Camera>();
 
         if (_Camera.allowHDR && SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR))
-            _BufferRenderTextureFormat = RenderTextureFormat.DefaultHDR;
+            _TextureFormat = RenderTextureFormat.DefaultHDR;
 
         _CommandBuffer = new CommandBuffer();
         _CommandBuffer.name = "Blur screen";
@@ -81,13 +81,13 @@ public class CommandBufferBlur : MonoBehaviour
         for (int i = 0; i < numIterations; ++i)
         {
             int screenCopyID = Shader.PropertyToID("_ScreenCopyTexture");
-            _CommandBuffer.GetTemporaryRT(screenCopyID, -1, -1, 0, FilterMode.Bilinear, _BufferRenderTextureFormat);
+            _CommandBuffer.GetTemporaryRT(screenCopyID, -1, -1, 0, FilterMode.Bilinear, _TextureFormat);
             _CommandBuffer.Blit(BuiltinRenderTextureType.CurrentActive, screenCopyID);
 
             int blurredID = Shader.PropertyToID("_Grab" + i + "_Temp1");
             int blurredID2 = Shader.PropertyToID("_Grab" + i + "_Temp2");
-            _CommandBuffer.GetTemporaryRT(blurredID, (int)sizes[i].x, (int)sizes[i].y, 0, FilterMode.Bilinear, _BufferRenderTextureFormat);
-            _CommandBuffer.GetTemporaryRT(blurredID2, (int)sizes[i].x, (int)sizes[i].y, 0, FilterMode.Bilinear, _BufferRenderTextureFormat);
+            _CommandBuffer.GetTemporaryRT(blurredID, (int)sizes[i].x, (int)sizes[i].y, 0, FilterMode.Bilinear, _TextureFormat);
+            _CommandBuffer.GetTemporaryRT(blurredID2, (int)sizes[i].x, (int)sizes[i].y, 0, FilterMode.Bilinear, _TextureFormat);
 
             _CommandBuffer.Blit(screenCopyID, blurredID);
             _CommandBuffer.ReleaseTemporaryRT(screenCopyID);
